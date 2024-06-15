@@ -1,0 +1,6 @@
+~/*
+dist/*
+node_modules/**
+.clasp.json
+.clasprc.json
+.node_repl_history
