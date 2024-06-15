@@ -1,0 +1,8 @@
+{
+	"name": "Clasp Development Container",
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+	],
+	"service": "clasp",
+	"workspaceFolder": "/src"
+}

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  clasp:
+    image: clasp:sample
+    build: .
+    tty: true
+    volumes:
+      - ./src/:/src/
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    working_dir: /src/
