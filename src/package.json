@@ -6,6 +6,7 @@
   },
   "scripts": {
     "build": "esbuild src/main.ts --bundle --banner:js=\"$(cat banner.js)\" --outdir=dist --format=iife --global-name=_entry",
-    "deploy": "clasp push"
+    "deploy": "clasp push",
+    "deploy:watch": "npx nodemon -e ts -w src/ --exec 'npm run build && npm run deploy'"
   }
 }
