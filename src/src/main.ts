@@ -1,6 +1,17 @@
-import { GetOcrText, GetSummarizationTargetFiles, MoveFile, RenameFile } from "./drive";
+import {
+  GetOcrText,
+  GetSummarizationTargetFiles,
+  MoveFile,
+  RenameFile,
+} from "./drive";
 import { OpenAIClient } from "./chatgpt";
-import { CATEGORIES, OPEN_AI_API_KEY, SLACK_WEBHOOK_URL, STORING_TARGET_FOLDER_ID, SUMMARIZATION_TARGET_FOLDER_ID } from "./spreadsheet";
+import {
+  CATEGORIES,
+  OPEN_AI_API_KEY,
+  SLACK_WEBHOOK_URL,
+  STORING_TARGET_FOLDER_ID,
+  SUMMARIZATION_TARGET_FOLDER_ID,
+} from "./spreadsheet";
 import { SlackClient } from "./slack";
 
 // まとめて実行するファイル数
@@ -17,12 +28,14 @@ export async function main() {
   const slackClient = new SlackClient(SLACK_WEBHOOK_URL);
 
   // 要約対象ファイル一覧を取得する
-  const allSummaryTargetFiles = GetSummarizationTargetFiles(SUMMARIZATION_TARGET_FOLDER_ID);
+  const allSummaryTargetFiles = GetSummarizationTargetFiles(
+    SUMMARIZATION_TARGET_FOLDER_ID,
+  );
   if (allSummaryTargetFiles.length === 0) {
-    Logger.log('要約対象ファイルがありませんでした');
+    Logger.log("要約対象ファイルがありませんでした");
     return;
   }
-  Logger.log(`要約対象ファイル数: ${allSummaryTargetFiles.length}件`)
+  Logger.log(`要約対象ファイル数: ${allSummaryTargetFiles.length}件`);
   Logger.log(allSummaryTargetFiles);
 
   // 件数を制限する
@@ -43,31 +56,30 @@ export async function main() {
   });
 }
 
-
 // 設定をチェックする
 function checkSetting(): boolean {
   if (!OPEN_AI_API_KEY) {
-    Logger.log('APIキーが設定されていません');
+    Logger.log("APIキーが設定されていません");
     return false;
   }
 
   if (!STORING_TARGET_FOLDER_ID) {
-    Logger.log('格納先フォルダが設定されていません');
+    Logger.log("格納先フォルダが設定されていません");
     return false;
   }
 
   if (SUMMARIZATION_TARGET_FOLDER_ID.length === 0) {
-    Logger.log('要約対象フォルダが設定されていません');
+    Logger.log("要約対象フォルダが設定されていません");
     return false;
   }
 
   if (!SLACK_WEBHOOK_URL) {
-    Logger.log('Slack WebHook URLが設定されていません');
+    Logger.log("Slack WebHook URLが設定されていません");
     return false;
   }
 
   if (CATEGORIES.length === 0) {
-    Logger.log('カテゴリが設定されていません');
+    Logger.log("カテゴリが設定されていません");
     return false;
   }
 

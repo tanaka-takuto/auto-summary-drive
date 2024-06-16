@@ -1,4 +1,3 @@
-
 // セリフ一覧
 const SERIFS = [
   "こんにちは、おまとめんだよ！\nPDFを要約したよ。\nこれで大事なポイントが一目でわかるね！\n書類整理はぼくにおまかせなのですっきりん！",
@@ -30,16 +29,14 @@ const SERIFS = [
   "おまとめんだよ！\nPDFの要約を完了したよ。\nこれで重要なポイントが一目でわかるね。\nすっきりん！",
   "やっほー、おまとめんだよ！\nPDFをさくっと要約したから、すぐにポイントがわかるよ。\n書類整理はおまかせ！",
   "おまとめんだよ！\nPDFを要約しておいたよ。\n大事な部分を見逃さないよ。\nすっきりん！",
-  "こんにちは、ぼくはおまとめん！\nPDFを短くまとめたよ。\nポイントがわかりやすくなったよ。\nすっきりん！"
-]
+  "こんにちは、ぼくはおまとめん！\nPDFを短くまとめたよ。\nポイントがわかりやすくなったよ。\nすっきりん！",
+];
 
 // ランダムなセリフを取得する
 function getRandomSerif() {
-  const random = (new Date().getMilliseconds()) % SERIFS.length
+  const random = new Date().getMilliseconds() % SERIFS.length;
   return SERIFS[random];
 }
-
-
 
 export class SlackClient {
   private readonly webhookUrl: string;
@@ -50,103 +47,108 @@ export class SlackClient {
 
   // 通知する
   notify(file: GoogleAppsScript.Drive.File, summary: string, todos: string[]) {
-    Logger.log('--- start notify ---');
+    Logger.log("--- start notify ---");
 
-    const todoBlock = [{
-      "type": "divider"
-    },
-    {
-      "type": "header",
-      "text": {
-        "type": "plain_text",
-        "text": "すること",
-        "emoji": true
-      }
-    },
-    {
-      "type": "rich_text",
-      "elements": [
-        {
-          "type": "rich_text_list",
-          "style": "bullet",
-          "elements":
-            todos.map(todo => {
+    const todoBlock = [
+      {
+        type: "divider",
+      },
+      {
+        type: "header",
+        text: {
+          type: "plain_text",
+          text: "すること",
+          emoji: true,
+        },
+      },
+      {
+        type: "rich_text",
+        elements: [
+          {
+            type: "rich_text_list",
+            style: "bullet",
+            elements: todos.map((todo) => {
               return {
-                "type": "rich_text_section",
-                "elements": [
+                type: "rich_text_section",
+                elements: [
                   {
-                    "type": "text",
-                    "text": todo
-                  }
-                ]
-              }
-            })
-        }
-      ]
-    }]
+                    type: "text",
+                    text: todo,
+                  },
+                ],
+              };
+            }),
+          },
+        ],
+      },
+    ];
 
     const payload = {
-      "blocks": [
+      blocks: [
         {
-          "type": "section",
-          "text": {
-            "type": "plain_text",
-            "text": getRandomSerif(),
-            "emoji": true
-          }
-        },
-        {
-          "type": "divider"
-        },
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": `ファイル名: <${file.getUrl()}|${file.getName()}>`
+          type: "section",
+          text: {
+            type: "plain_text",
+            text: getRandomSerif(),
+            emoji: true,
           },
-          "accessory": {
-            "type": "button",
-            "text": {
-              "type": "plain_text",
-              "text": "ダウンロード",
-              "emoji": true
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `ファイル名: <${file.getUrl()}|${file.getName()}>`,
+          },
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "ダウンロード",
+              emoji: true,
             },
-            "value": "click_me_123",
-            "url": file.getDownloadUrl(),
-            "action_id": "button-action"
-          }
+            value: "click_me_123",
+            url: file.getDownloadUrl(),
+            action_id: "button-action",
+          },
         },
         {
-          "type": "divider"
+          type: "divider",
         },
         {
-          "type": "header",
-          "text": {
-            "type": "plain_text",
-            "text": "要約",
-            "emoji": true
-          }
+          type: "header",
+          text: {
+            type: "plain_text",
+            text: "要約",
+            emoji: true,
+          },
         },
         {
-          "type": "section",
-          "text": {
-            "type": "plain_text",
-            "text": summary,
-            "emoji": true
-          }
-        }
-      ]
-    }
+          type: "section",
+          text: {
+            type: "plain_text",
+            text: summary,
+            emoji: true,
+          },
+        },
+      ],
+    };
 
     if (todos.length > 0) {
-      payload.blocks.push(...todoBlock)
+      payload.blocks.push(...todoBlock);
     }
 
     const response = UrlFetchApp.fetch(this.webhookUrl, {
-      method: 'post',
-      contentType: 'application/json',
-      payload: JSON.stringify(payload)
-    })
-    Logger.log({ statusCode: response.getResponseCode(), headers: response.getAllHeaders(), content: response.getContentText() });
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(payload),
+    });
+    Logger.log({
+      statusCode: response.getResponseCode(),
+      headers: response.getAllHeaders(),
+      content: response.getContentText(),
+    });
   }
 }

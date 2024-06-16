@@ -4,5 +4,13 @@
 		"../docker-compose.yml",
 	],
 	"service": "clasp",
-	"workspaceFolder": "/src"
+	"workspaceFolder": "/src",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode"
+			]
+		}
+	}
 }
