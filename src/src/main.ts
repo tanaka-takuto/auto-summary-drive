@@ -44,6 +44,8 @@ export async function main() {
   summaryTargetFiles.forEach(async (summaryTargetFile) => {
     // 要約を作成
     const ocr = GetOcrText(summaryTargetFile.file);
+    Logger.log(ocr);
+
     const summary = await chatGPTClient.summaryOCR(ocr, CATEGORIES);
     Logger.log(summary);
 
