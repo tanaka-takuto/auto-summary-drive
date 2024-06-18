@@ -1,3 +1,5 @@
+import { Importance } from "./chatgpt";
+
 // セリフ一覧
 const SERIFS = [
   "こんにちは、おまとめんだよ！\nPDFを要約したよ。\nこれで大事なポイントが一目でわかるね！\n書類整理はぼくにおまかせなのですっきりん！",
@@ -38,6 +40,20 @@ function getRandomSerif() {
   return SERIFS[random];
 }
 
+// 重要度に応じた色を取得する
+function getImportanceColor(importance: Importance) {
+  switch (importance) {
+    case Importance.Low:
+      return "#32CD32";
+    case Importance.Middle:
+      return "#FFA500";
+    case Importance.High:
+      return "#FF6347";
+    default:
+      return "#32CD32";
+  }
+}
+
 export class SlackClient {
   private readonly webhookUrl: string;
 
@@ -46,7 +62,12 @@ export class SlackClient {
   }
 
   // 通知する
-  notify(file: GoogleAppsScript.Drive.File, summary: string, todos: string[]) {
+  notify(
+    file: GoogleAppsScript.Drive.File,
+    summary: string,
+    importance: Importance,
+    todos: string[]
+  ) {
     Logger.log("--- start notify ---");
 
     const todoBlock = [
@@ -83,61 +104,37 @@ export class SlackClient {
       },
     ];
 
-    const payload = {
-      blocks: [
+    const payload: {
+      text: string;
+      attachments: { color: string; blocks: any[] }[];
+    } = {
+      text: getRandomSerif(),
+      attachments: [
         {
-          type: "section",
-          text: {
-            type: "plain_text",
-            text: getRandomSerif(),
-            emoji: true,
-          },
-        },
-        {
-          type: "divider",
-        },
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `ファイル名: <${file.getUrl()}|${file.getName()}>`,
-          },
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "ダウンロード",
-              emoji: true,
+          color: getImportanceColor(importance),
+          blocks: [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `*<${file.getUrl()}|${file.getName()}>*`,
+              },
             },
-            value: "click_me_123",
-            url: file.getDownloadUrl(),
-            action_id: "button-action",
-          },
-        },
-        {
-          type: "divider",
-        },
-        {
-          type: "header",
-          text: {
-            type: "plain_text",
-            text: "要約",
-            emoji: true,
-          },
-        },
-        {
-          type: "section",
-          text: {
-            type: "plain_text",
-            text: summary,
-            emoji: true,
-          },
+            {
+              type: "section",
+              text: {
+                type: "plain_text",
+                text: summary,
+                emoji: true,
+              },
+            },
+          ],
         },
       ],
     };
 
     if (todos.length > 0) {
-      payload.blocks.push(...todoBlock);
+      payload.attachments[0].blocks.push(...todoBlock);
     }
 
     const response = UrlFetchApp.fetch(this.webhookUrl, {

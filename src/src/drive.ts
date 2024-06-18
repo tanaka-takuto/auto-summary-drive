@@ -5,7 +5,7 @@ export class SummarizationTargetFile {
 
 // 要約対象ファイル一覧を取得する
 export function GetSummarizationTargetFiles(
-  folderID: string,
+  folderID: string
 ): SummarizationTargetFile[] {
   Logger.log(`--- start GetSummarizationTargetFiles ---: ${folderID}`);
   const responseFiles: SummarizationTargetFile[] = [];
@@ -42,7 +42,7 @@ export function GetOcrText(file: GoogleAppsScript.Drive.File): string {
   const document = Drive.Files.copy(
     { title: `_tmp_${file.getId()}` },
     file.getId(),
-    { ocr: true },
+    { ocr: true }
   );
   const docFile = DocumentApp.openById(document.id);
   const body = docFile.getBody();
@@ -57,14 +57,14 @@ export function GetOcrText(file: GoogleAppsScript.Drive.File): string {
 export function RenameFile(
   file: GoogleAppsScript.Drive.File,
   category: string,
-  title: string,
+  title: string
 ) {
   Logger.log(`--- start RenameFile ---: ${file.getName()}`);
 
   const createdAt = Utilities.formatDate(
     file.getDateCreated(),
     "JST",
-    "yyyyMMddHHmmss",
+    "yyyyMMdd"
   );
   const fileExtension = file.getName().split(".").pop();
 

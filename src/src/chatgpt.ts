@@ -1,7 +1,14 @@
+export enum Importance {
+  Low = "Low",
+  Middle = "Middle",
+  High = "High",
+}
+
 // 要約レスポンス
 export class SummaryResponse {
   title: string;
   summary: string;
+  importance: Importance;
   category: string;
   todo: string[];
 }
@@ -23,7 +30,7 @@ export class OpenAIClient {
   // OCR結果を要約する
   async summaryOCR(
     ocr: string,
-    categories: string[],
+    categories: string[]
   ): Promise<SummaryResponse> {
     Logger.log("--- start summaryOCR ---");
 
@@ -35,16 +42,24 @@ export class OpenAIClient {
     const systemPrompt = `PDFのOCR結果を入力します。
 OCRの結果を下記JSONにまとめてください。
 
+# 今日
+今日は'${new Date().toLocaleString()}'です。
+
 # 制約
 - 日本語
 - 下記JSONで出力
+- importance
+  - Low: 対応不要
+  - Middle: 近い内に対応が必要、したほうがいいこと
+  - High: すぐに対応が必要、法的な対応が必要
 
 # JSON
 {
   "title": "タイトル(50文字以内,記号は使わない)",
   "summary": "要約(500文字以内)"
-  "category": "カテゴリ(${categories.join(" or ")})",;
-  "todo": ["するべきこと(50文字以内)"];
+  "importance": "重要度(${Object.values(Importance).join(" or ")})",
+  "category": "カテゴリ(${categories.join(" or ")})",
+  "todo": ["するべきこと(50文字以内)"]
 }
 `;
     const body = {
@@ -69,7 +84,7 @@ OCRの結果を下記JSONにまとめてください。
       });
       const responseJson = JSON.parse(response.getContentText());
       return JSON.parse(
-        responseJson.choices[0].message.content,
+        responseJson.choices[0].message.content
       ) as SummaryResponse;
     } catch (error) {
       Logger.log(error);
