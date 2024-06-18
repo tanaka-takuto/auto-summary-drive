@@ -29,7 +29,7 @@ export async function main() {
 
   // 要約対象ファイル一覧を取得する
   const allSummaryTargetFiles = GetSummarizationTargetFiles(
-    SUMMARIZATION_TARGET_FOLDER_ID
+    SUMMARIZATION_TARGET_FOLDER_ID,
   );
   if (allSummaryTargetFiles.length === 0) {
     Logger.log("要約対象ファイルがありませんでした");
@@ -58,7 +58,7 @@ export async function main() {
       summaryTargetFile.file,
       summary.summary,
       summary.importance,
-      summary.todo
+      summary.todo,
     );
   });
 }

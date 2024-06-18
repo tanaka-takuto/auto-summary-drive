@@ -1,7 +1,7 @@
 export enum Importance {
-  Low = "Low",
-  Middle = "Middle",
-  High = "High",
+  Low = 'Low',
+  Middle = 'Middle',
+  High = 'High',
 }
 
 // 要約レスポンス
@@ -30,13 +30,13 @@ export class OpenAIClient {
   // OCR結果を要約する
   async summaryOCR(
     ocr: string,
-    categories: string[]
+    categories: string[],
   ): Promise<SummaryResponse> {
-    Logger.log("--- start summaryOCR ---");
+    Logger.log('--- start summaryOCR ---');
 
-    const COMPLETIONS_API = "https://api.openai.com/v1/chat/completions";
+    const COMPLETIONS_API = 'https://api.openai.com/v1/chat/completions';
     const headers = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${this.apiKey}`,
     };
     const systemPrompt = `PDFのOCR結果を入力します。
@@ -57,23 +57,23 @@ OCRの結果を下記JSONにまとめてください。
 {
   "title": "タイトル(50文字以内,記号は使わない)",
   "summary": "要約(500文字以内)"
-  "importance": "重要度(${Object.values(Importance).join(" or ")})",
-  "category": "カテゴリ(${categories.join(" or ")})",
+  "importance": "重要度(${Object.values(Importance).join(' or ')})",
+  "category": "カテゴリ(${categories.join(' or ')})",
   "todo": ["するべきこと(50文字以内)"]
 }
 `;
     const body = {
-      model: "gpt-4o",
+      model: 'gpt-4o',
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: ocr },
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: ocr },
       ],
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
     };
 
     try {
       const response = UrlFetchApp.fetch(COMPLETIONS_API, {
-        method: "post",
+        method: 'post',
         headers: headers,
         payload: JSON.stringify(body),
       });
@@ -84,7 +84,7 @@ OCRの結果を下記JSONにまとめてください。
       });
       const responseJson = JSON.parse(response.getContentText());
       return JSON.parse(
-        responseJson.choices[0].message.content
+        responseJson.choices[0].message.content,
       ) as SummaryResponse;
     } catch (error) {
       Logger.log(error);

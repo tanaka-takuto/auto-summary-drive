@@ -66,7 +66,7 @@ export class SlackClient {
     file: GoogleAppsScript.Drive.File,
     summary: string,
     importance: Importance,
-    todos: string[]
+    todos: string[],
   ) {
     Logger.log("--- start notify ---");
 
